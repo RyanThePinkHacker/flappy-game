@@ -20,4 +20,6 @@ body {
     image-rendering: -o-crisp-edges;
     image-rendering: -webkit-optimize-contrast;
     -ms-interpolation-mode: nearest-neighbor;
+    object-fit: cover;
+    pointer-events: none;
 }

@@ -1,6 +1,7 @@
 // Setup
-const screenX = 320;
-const screenY = 450;
+const screenX = document.documentElement.clientWidth;
+const screenY = document.documentElement.clientHeight;
+const pixelSize = screenY / 256;
 
 // Color
 const translucent = "rgba(0, 0, 0, 0.3)";
@@ -11,11 +12,11 @@ var score = 0;
 var dead = false;
 
 // Physics
-var gravity = 0;
+const gravity = 0.1;
 
 // Bird
-const birdSizeX = 32;
-const birdSizeY = 32;
+const birdSizeX = pixelSize * 16;
+const birdSizeY = pixelSize * 14;
 var birdPositionX = screenX / 8;
 var birdPositionY = screenY / 2;
 var birdVelocity = 0;
@@ -24,8 +25,8 @@ var birdVelocity = 0;
 var pipeAmount = 0;
 var pipePositions = [];
 var pipeShift = [];
-const pipeSizeX = 52;
-const pipeSizeY = 450;
+const pipeSizeX = pixelSize * 26;
+const pipeSizeY = pixelSize * 225;
 var pipeGap = 200;
 var pipeGaps = [];
 
@@ -33,7 +34,6 @@ $(() => {
   // When the player jumps
   $("#game").on("click", () => {
     if (!dead) {
-      gravity = 0.1;
       birdVelocity = 2;
     } else {
       replay();
@@ -55,10 +55,13 @@ function gameStart(setupLoop) {
   setBirdPosition(birdPositionX, birdPositionY);
   
   $("#game").css("background-color", "#0094ca");
-  
-  createPipe(0);
-  createPipe(128);
-  createPipe(256);
+
+  var pipeFrequency = (screenX / pipeSizeX) / pixelSize;
+
+  for (let i = 0; i < pipeFrequency; i++) {
+    console.log(i);
+    createPipe((pipeSizeX * i) * pixelSize);
+  }
   
   // Score label
   $("<div/>", {
@@ -68,7 +71,7 @@ function gameStart(setupLoop) {
     "margin": "4px",
     "padding": "4px",
     "border-radius": "4px",
-    "background-color": translucent
+    "background-color": translucent,
   }).text("Score: 0")
   .appendTo("#game");
   
@@ -105,7 +108,7 @@ function gameLoop() {
           // Check right
           if (birdPositionX <= pipePositions[i] + pipeSizeX) {
             // Top pipe
-            if (birdPositionY <= (screenY / 2) - (pipeGaps[i] / 2) - pipeShift[i]) {
+            if (birdPositionY <= (screenY / 2) - (pipeGaps[i] / 2) + pipeShift[i]) {
               gameEnd();
             } else if (birdPositionY + birdSizeY >= (screenY / 2) + (pipeGaps[i] / 2) + pipeShift[i]) { // Bottom pipe
               gameEnd();
@@ -202,12 +205,12 @@ function movePipes() {
     var topId = `pipe-top-${i}`;
     var bottomId = `pipe-bottom-${i}`;
     
-    var x = pipePositions[i] - 1;
+    var x = pipePositions[i] - (pixelSize * 0.5);
     
     // Move back onto the screen
     if (x < -(pipeSizeX + 32)) {
       x = screenX + pipeSizeX;
-      pipeShift[i] = Math.round(Math.random(-50, 50));
+      pipeShift[i] = randomNumber(pixelSize * -40, pixelSize * 40);
       pipeGaps[i] = pipeGap;
     }
     
@@ -226,18 +229,20 @@ function createPipe(shiftX) {
   // Create top pipe
   $("<img/>", {
     id: topId,
-    src: "content/pipe_top.png"
+    src: "content/pipe_top.png",
+    draggable: false
   }).appendTo("#game");
 
   // Create bottom pipe
   $("<img/>", {
     id: bottomId,
-    src: "content/pipe_bottom.png"
+    src: "content/pipe_bottom.png",
+    draggable: "false"
   }).appendTo("#game");
   
   var x = screenX - pipeSizeX + shiftX;
-  
-  var shiftY = Math.round(Math.random(-50, 50));
+
+  var shiftY = randomNumber(pixelSize * -40, pixelSize * 40);
   
   // Set position
   setTransform(topId, x,(screenY / 2) - pipeSizeY - (pipeGap / 2) - shiftY, pipeSizeX, pipeSizeY);
@@ -248,4 +253,8 @@ function createPipe(shiftX) {
   pipeGaps.push(pipeGap);
   
   pipeAmount++;
+}
+
+function randomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min) ) + min;
 }
