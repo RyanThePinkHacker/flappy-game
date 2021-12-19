@@ -56,11 +56,10 @@ function gameStart(setupLoop) {
   
   $("#game").css("background-color", "#0094ca");
 
-  var pipeFrequency = (screenX / pipeSizeX) / pixelSize;
+  var pipeFrequency = (screenX / pipeSizeX) + (pipeSizeX * 4);
 
-  for (let i = 0; i < pipeFrequency; i++) {
-    console.log(i);
-    createPipe((pipeSizeX * i) * pixelSize);
+  for (let i = 0; i < screenX / pipeFrequency; i++) {
+    createPipe(pipeFrequency * i);
   }
   
   // Score label
