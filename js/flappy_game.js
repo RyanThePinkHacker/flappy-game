@@ -130,17 +130,18 @@ function gameLoop() {
     setBirdPosition(birdPositionX, birdPositionY);
 }
 
-function setTransform(id, positionX, positionY, sizeX, sizeY) {
+function setTransform(id, positionX, positionY, sizeX, sizeY, rotation) {
   $(`#${id}`).css({
     "left": `${positionX}px`,
     "top": `${positionY}px`,
     "width": `${sizeX}px`,
-    "height": `${sizeY}px`
+    "height": `${sizeY}px`,
+    "transform": `rotate(${rotation}deg)`,
   });
 }
 
 function setBirdPosition(x, y) {
-  setTransform("bird", x, y, birdSizeX, birdSizeY);
+  setTransform("bird", x, y, birdSizeX, birdSizeY, -birdVelocity * 4);
 }
 
 function checkCollision(y) {
@@ -213,8 +214,8 @@ function movePipes() {
       pipeGaps[i] = pipeGap;
     }
     
-    setTransform(topId, x, (screenY / 2) - pipeSizeY - (pipeGaps[i] / 2) + pipeShift[i], pipeSizeX, pipeSizeY);
-    setTransform(bottomId, x, (screenY / 2) + (pipeGaps[i] / 2) + pipeShift[i], pipeSizeX, pipeSizeY);
+    setTransform(topId, x, (screenY / 2) - pipeSizeY - (pipeGaps[i] / 2) + pipeShift[i], pipeSizeX, pipeSizeY, 0);
+    setTransform(bottomId, x, (screenY / 2) + (pipeGaps[i] / 2) + pipeShift[i], pipeSizeX, pipeSizeY, 0);
     
     pipePositions[i] = x;
   }
@@ -244,8 +245,8 @@ function createPipe(shiftX) {
   var shiftY = randomNumber(pixelSize * -40, pixelSize * 40);
   
   // Set position
-  setTransform(topId, x,(screenY / 2) - pipeSizeY - (pipeGap / 2) - shiftY, pipeSizeX, pipeSizeY);
-  setTransform(bottomId, x,(screenY / 2) + (pipeGap / 2) + shiftY, pipeSizeX, pipeSizeY);
+  setTransform(topId, x,(screenY / 2) - pipeSizeY - (pipeGap / 2) - shiftY, pipeSizeX, pipeSizeY, 0);
+  setTransform(bottomId, x,(screenY / 2) + (pipeGap / 2) + shiftY, pipeSizeX, pipeSizeY, 0);
   
   pipePositions.push(x);
   pipeShift.push(shiftY);
